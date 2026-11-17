@@ -52,3 +52,12 @@ On a configured Arch/Garuda workstation, `bash scripts/resolve-package-library.s
 
 ### Garuda alignment
 Follow [Garuda-specific setup, preflight, desktop preservation and recovery guidance](docs/GARUDA_INSTALL_ALIGNMENT.md). The installer now runs `garuda-update` for full upgrades; it does not silently update AUR packages, replace Garuda's default theme, or change kernel/boot settings.
+
+## Preconfigured Garuda deployment
+Use a preset for a ready-to-launch **receive-only** workstation without manually selecting packages:
+```bash
+bash deploy.sh --plan --preset rf-receiver
+bash deploy.sh --apply --preset rf-receiver
+bash scripts/verify-deployment.sh rf-receiver
+```
+Presets: `base` (core utilities), `rf-receiver` (core + SDR) and `field-comms` (core + SDR + ham + desktop). Each preserves Garuda's theme, disables user automations and never configures a transmitter. Deployment stages private user-level folders and manual-launch desktop entries only after successful installation. See [preconfigured deployment guide](docs/PRECONFIGURED_DEPLOYMENT.md). Software/driver availability and device hardware still require verification on the actual host.
