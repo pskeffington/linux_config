@@ -1,0 +1,18 @@
+# Fresh Arch/Garuda foundational tooling; each entry is checked with pacman -Si before installation.
+base-devel
+git
+curl
+wget
+ca-certificates
+usbutils
+pciutils
+util-linux
+iproute2
+ethtool
+jq
+python
+python-pip
+cmake
+ninja
+pkgconf
+libusb
