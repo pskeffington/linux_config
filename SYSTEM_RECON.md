@@ -35,6 +35,24 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - L1TF, Meltdown, Retbleed, Spectre v1/v2, SRBDS, Speculative Store Bypass, and TSX Async Abort: mitigations reported active
 - These are kernel status strings, not an independent security assessment. Review firmware and microcode updates for this CPU.
 
+### CPU thermal follow-up (2026-11-17)
+
+- Observed at 06:25 EST: `sensors` reported CPU package 99 C, cores 88–99 C, with a 100 C critical threshold; `/sys/class/thermal/thermal_zone0/temp` reported 100000 (100 C). A repeat about 30 seconds later remained at 99 C / 100 C.
+- In the same interval, CPU0 `core_throttle_total_time_ms` rose from 65469 to 69937 (4468 ms). This confirms active/recent thermal throttling while package temperature remained at its critical threshold.
+- Reported CPU frequency was 3.51 GHz and system load average was 2.65–3.61. The process list available to this session did not reveal the workload causing host load.
+- A temporary 2.0 GHz cap was attempted with `sudo -n`; it failed with exit code 1 because a password is required. No CPU limit or other system setting was changed.
+- Current remediation priority: stop CPU-heavy work and physically inspect CPU cooler mounting, fan operation, and airflow after the system is shut down and cooled. Do not run stress tests until temperatures are safe. Recheck idle temperature and throttling after the cooling system is inspected.
+- CPU thermal status: **FAIL / urgent unresolved hardware-cooling condition** pending physical inspection and safe retest. Current evidence cannot distinguish failed fan, poor cooler contact, blocked airflow, or unusually high load.
+
+### Investigation contract and status
+
+- Task: `CPU-GPU-REPAIR-2026-11-17`; owner: orchestrator (single-session work); source commit: `e9a65a1`.
+- Objective: diagnose and remediate the CPU/GPU issues observed on this system; preserve evidence in this repository.
+- Scope: read-only system diagnostics and this report. Any boot-configuration, firmware, privileged runtime, or physical hardware changes require the relevant user choice/approval and safe access.
+- Acceptance: CPU remains below the 80 C high threshold at idle with no increasing thermal-throttle time; GDS is either verified mitigated or the selected fallback is configured and verified with its AVX impact understood; GPU errors are traced to a supported driver path or reproducibly resolved; updated evidence is committed and pushed.
+- Dependencies/blockers: CPU cooler needs physical inspection due current critical temperature; privileged frequency cap requires an interactive password and was not applied; user selection for GDS fallback remains pending; display runtime verification is limited by this diagnostic shell not having an accessible desktop session.
+- Rollback: no system configuration changes have been made. Any future GRUB or CPU frequency change must retain a normal boot/recovery path and be reversible.
+
 ### GDS follow-up (2026-11-17)
 
 - Observed: `/sys/devices/system/cpu/vulnerabilities/gather_data_sampling` and `lscpu` both report `Vulnerable: No microcode`.
