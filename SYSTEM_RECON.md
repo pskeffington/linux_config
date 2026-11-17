@@ -41,10 +41,11 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - In the same interval, CPU0 `core_throttle_total_time_ms` rose from 65469 to 69937 (4468 ms). This confirms active/recent thermal throttling while package temperature remained at its critical threshold.
 - Later observation at 06:57 EST: package 60 C, cores 43–56 C, and thermal zone 59 C; load average 1.12–1.62. Temperatures had fallen below the 80 C high threshold without a configured CPU cap.
 - Throttle counters nevertheless rose between the 06:25 and 06:57 observations: CPU0 69937 to 97938 ms (+28.0 s), CPU1 94427 to 219231 ms (+124.8 s). This indicates accumulated thermal throttling during the intervening period, even though the later snapshot was cooler. Counters are cumulative since boot and do not establish the exact temperature or cause during the full interval.
+- User reports installing a new large dual-heatsink CPU cooler/fan. At 07:06 EST after this installation, package temperature was 34 C, cores 27–34 C, thermal zone 35 C, and load average 0.77–1.66. CPU0/CPU1 throttle totals were unchanged from 06:57 (97938 / 219231 ms); the 2.0 GHz cap had not been applied. This is a favorable short idle observation after the hardware change, not a sustained-load validation.
+- Interpretation: Linux's `core_throttle_total_time_ms` counts time the CPU thermal-status flag is set; it is not a general software frequency-cap counter. The prior 99–100 C readings establish that the CPU reached its reported thermal threshold, but neither those readings nor the cumulative counter identify the root cause or prove the newly installed cooler is defective. Intel documents a platform-driven external PROCHOT# path as a possible source of processor throttling on supported configurations. Sensor data alone cannot distinguish an internal CPU thermal event, a platform signal/limit, or software-managed frequency policy. No hardware fault is confirmed.
 - Reported CPU frequency was 3.51 GHz and system load average was 2.65–3.61. The process list available to this session did not reveal the workload causing host load.
 - A temporary 2.0 GHz cap was attempted with `sudo -n`; it failed with exit code 1 because a password is required. No CPU limit or other system setting was changed.
-- Current remediation priority: stop CPU-heavy work and physically inspect CPU cooler mounting, fan operation, and airflow after the system is shut down and cooled. Do not run stress tests until temperatures are safe. Recheck idle temperature and throttling after the cooling system is inspected.
-- CPU thermal status: **FAIL / urgent unresolved cooling issue** because it reached critical temperature and the cumulative throttle counters continue to rise. Current snapshot is cooler; physical inspection and safe idle retest are still needed. Current evidence cannot distinguish failed fan, poor cooler contact, blocked airflow, or a transient workload/measurement interval.
+- CPU thermal status: **IDLE CHECK PASS / ROOT CAUSE OPEN**. Following the user's cooler installation, the CPU is cool at idle and counters were unchanged over a 9-minute observation interval. The previous critical-temperature events and accumulated throttling remain in history; no sustained-load check was run. If thermal-status counters rise again while temperatures remain low, inspect platform/PROCHOT, firmware, power-limit, and governor telemetry rather than attributing it to the cooler.
 
 ### Investigation contract and status
 
@@ -52,7 +53,7 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Objective: diagnose and remediate the CPU/GPU issues observed on this system; preserve evidence in this repository.
 - Scope: read-only system diagnostics and this report. Any boot-configuration, firmware, privileged runtime, or physical hardware changes require the relevant user choice/approval and safe access.
 - Acceptance: CPU remains below the 80 C high threshold at idle with no increasing thermal-throttle time; GDS is either verified mitigated or the selected fallback is configured and verified with its AVX impact understood; GPU errors are traced to a supported driver path or reproducibly resolved; updated evidence is committed and pushed.
-- Dependencies/blockers: CPU cooler needs physical inspection due current critical temperature; privileged frequency cap requires an interactive password and was not applied; user selection for GDS fallback remains pending; display runtime verification is limited by this diagnostic shell not having an accessible desktop session.
+- Dependencies/blockers: CPU cooler has been replaced per user; safe idle snapshot improved, but sustained-load behavior is unverified; privileged frequency cap requires an interactive password and was not applied; user selection for GDS fallback remains pending; display runtime verification is limited by this diagnostic shell not having an accessible desktop session.
 - Rollback: no system configuration changes have been made. Any future GRUB or CPU frequency change must retain a normal boot/recovery path and be reversible.
 
 ### GDS follow-up (2026-11-17)
@@ -73,8 +74,10 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 ## Graphics and peripherals
 
-- GPU: AMD Navi 44, PCI ID 1002:7590; reported by inxi as Radeon RX 9050 / 9060 XT
+- GPU: AMD Navi 44, PCI ID 1002:7590; reported by inxi as Radeon RX 9050 / 9060 XT. User confirms the GPU is also new; no physical GPU fault is established by current evidence.
 - Kernel driver: amdgpu; Mesa package version 26.2.7
+- Boot log has a burst of `Unsupported screen format RA24` messages with KWin modeset failures. AMD's display maintainer says work item 5339 adds `DRM_FORMAT_RGBA8888` support and prefers that approach over dropping the advertised format. Installed stack at 07:00: Linux Zen 7.3.4, KWin 6.8.3, Mesa 26.2.7, libdrm 2.4.134, firmware 20261019; `pacman -Qu` listed no updates for these packages. The RA24 issue therefore remains a driver/compositor compatibility issue awaiting a shipped fix; current boot logs show no GPU reset/ring-timeout evidence.
+- Sources: [Linux Intel thermal throttle counter documentation](https://cdn.kernel.org/doc/html/latest/admin-guide/thermal/intel_thermal_throttle.html), [Intel Skylake S-platform datasheet](https://cdrdv2-public.intel.com/332687/332687_SKL%20Datasheet%20Vol%201_rev010.pdf), [AMD maintainer response on RA24](https://mid.mail-archive.com/amd-gfx%40lists.freedesktop.org/msg155666.html).
 - Follow-up: inxi reported llvmpipe for both OpenGL and Vulkan while the amdgpu kernel driver was loaded. Confirm the active userspace renderer and Vulkan ICD with glxinfo -B and vulkaninfo --summary in the target desktop session.
 - Network adapters detected: Intel I219-V Ethernet (e1000e) and Qualcomm Atheros QCA6174 Wi-Fi (ath10k_pci). Addresses are omitted.
 
