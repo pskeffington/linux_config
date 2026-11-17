@@ -25,3 +25,13 @@ Verify `pacman -Si` mappings for every candidate; add USRP, Airspy, HackRF, SDRp
 - Automations must be user-scoped, opt-in, and documented with disable instructions. No RF transmit or privileged background daemon.
 - Run `bash tests/static.sh` before packaging; record the result from a real machine rather than claiming GitHub file creation is test execution.
 - GitHub is the authoritative source for all source modifications. Keep acceptance evidence private on each target machine.
+
+## Master package library contract
+Treat `packages/master-catalog.json` as the canonical candidate package catalog; `packages/*.txt` are generated deployment views. Before editing the manifests:
+1. Update the master catalog and its source, owner, hardware and review metadata.
+2. Run `python scripts/package-library.py render` and verify the diff.
+3. Run `python scripts/package-library.py validate --check` and `python -m unittest discover -s tests -v`.
+4. Verify candidate names on actual Arch/Garuda host with `bash scripts/resolve-package-library.sh`. Record status per architecture, release and timestamp; do not claim host verification from CI alone.
+5. Never promote manual/AUR candidates into pacman install lists automatically or claim TX acceptance.
+
+The master operator skill in `agent_skills` proposes capability groupings; only the reviewed `linux_config` source can change host package operations.
