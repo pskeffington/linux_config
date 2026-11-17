@@ -1,0 +1,21 @@
+id	category	author_or_organization	source	source_type	use_case	confidence	validation_task
+RF-L001	Arch deployment	ArchWiki community	https://wiki.archlinux.org/title/Amateur_radio	maintained distro guide	Available apps and AUR distinction	High	Validate pacman package names on host
+RF-L002	RTL-SDR drivers	ArchWiki community	https://wiki.archlinux.org/title/RTL-SDR	maintained distro guide	USB drivers, udev, kernel DVB conflicts	High	Inspect device IDs and packaged udev rules
+RF-L003	DSP	GNU Radio project	https://wiki.gnuradio.org/index.php/Tutorials	official tutorials	Flowgraphs, resampling, IQ blocks	High	Build synthetic tone and FM decode fixture
+RF-L004	Spectrum acquisition	Osmocom RTL-SDR	https://osmocom.org/projects/rtl-sdr/wiki	upstream project	Sample acquisition, rtl_test	High	5-second receive-only IQ validation
+RF-L005	Band coordination	ARRL	https://www.arrl.org/band-plan	operator organization guidance	Band/mode coordination	High	Cross-check jurisdiction and privileges before TX
+RF-L006	Rules	FCC	https://www.ecfr.gov/current/title-47/chapter-I/subchapter-D/part-97	regulation	Authorized amateur operations	High	Verify current provisions by band/mode/licence
+RF-L007	Digital modes	W1HKJ / Fldigi	http://www.w1hkj.com/	upstream author	PSK, RTTY, soundcard data modes	Medium	Source and version verification
+RF-L008	Packet APRS	WB2OSZ / Dire Wolf	https://github.com/wb2osz/direwolf	upstream author	Soundcard TNC and APRS decoding	High	Decode approved fixture offline
+RF-L009	Weak signal	WSJT-X project	https://wsjt.sourceforge.io/	upstream project	FT8, JT65, WSPR	Medium	Verify current canonical docs and RX test fixtures
+RF-L010	Radio CAT	Hamlib project	https://hamlib.github.io/	upstream project	Rig model catalog and CAT control	High	Read-only rig discovery
+RF-L011	Hardware abstraction	SoapySDR project	https://github.com/pothosware/SoapySDR	upstream project	Cross-vendor SDR device API	High	Enumerate known hardware safely
+RF-L012	Digital speech	Codec2 project	https://github.com/drowe67/codec2	upstream author	Voice codecs and FreeDV research	High	Offline reference audio comparison
+RF-L013	Field digital	JS8Call project	https://js8call.com/	project website	Weak signal asynchronous text	Medium	Confirm source/release and license
+RF-L014	Mesh	Meshtastic project	https://meshtastic.org/docs/	upstream documentation	LoRa field nodes, telemetry	High	Inventory serial/network node read-only
+RF-L015	Field interoperability	ARES / ARRL	https://www.arrl.org/ares	operator organization program	Emergency communication, message handling	High	Extract repeatable field checklist
+RF-L016	Field interoperability	RACES / FEMA	https://www.ready.gov/communications	public agency guidance	Interoperability and preparedness	Medium	Locate authoritative jurisdiction-specific plan
+RF-L017	Ham practitioner sources	Ham Radio Workbench	https://www.hamradioworkbench.com/	practitioner podcast	Station assembly, power and practical tests	Medium	Identify specific technically verifiable episodes
+RF-L018	SDR practitioner sources	RTL-SDR Blog	https://www.rtl-sdr.com/	practitioner / vendor site	Receivers, antennas, RF front-end troubleshooting	Medium	Verify hardware model and official drivers
+RF-L019	Propagation	NOAA SWPC	https://www.swpc.noaa.gov/	government science	HF propagation and space weather	High	Document observation vs forecast
+RF-L020	Repeaters	RepeaterBook	https://www.repeaterbook.com/	community directory	Candidate local repeaters	Medium	Validate current frequencies independently, no TX assumption
