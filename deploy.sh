@@ -7,12 +7,16 @@ PROFILES="core"
 THEME=keep
 AUTOMATION=off
 ASSUME_YES=0
+PRESET=''
+PROFILES_EXPLICIT=0
+THEME_EXPLICIT=0
+AUTOMATION_EXPLICIT=0
 usage() {
 cat <<'USAGE'
-Usage: bash deploy.sh [--plan|--download|--apply] [--profiles core,sdr,ham,desktop]
+Usage: bash deploy.sh [--plan|--download|--apply] [--preset base|rf-receiver|field-comms]\n                      [--profiles core,sdr,ham,desktop]
                       [--theme keep|breeze-dark|breeze-light]
                       [--automation off|inventory-weekly] [--yes]
-Default: plan core only; no writes. --download caches packages, --apply installs.
+Default: plan core only; no writes. Presets retain theme and automation defaults. --download caches packages, --apply installs.
 --yes bypasses package confirmation only, not theme or driver safety gates.
 No AUR, radio transmit, USB flashing, or system-wide services are configured.
 USAGE
@@ -22,15 +26,37 @@ while (($#)); do
     --plan) MODE=plan;;
     --download) MODE=download;;
     --apply) MODE=apply;;
-    --profiles) (($#>=2)) || { usage >&2; exit 2; }; PROFILES="$2"; shift;;
-    --theme) (($#>=2)) || { usage >&2; exit 2; }; THEME="$2"; shift;;
-    --automation) (($#>=2)) || { usage >&2; exit 2; }; AUTOMATION="$2"; shift;;
+    --profiles) (($#>=2)) || { usage >&2; exit 2; }; PROFILES="$2"; PROFILES_EXPLICIT=1; shift;;
+    --theme) (($#>=2)) || { usage >&2; exit 2; }; THEME="$2"; THEME_EXPLICIT=1; shift;;
+    --automation) (($#>=2)) || { usage >&2; exit 2; }; AUTOMATION="$2"; AUTOMATION_EXPLICIT=1; shift;;
+    --preset) (($#>=2)) || { usage >&2; exit 2; }; PRESET="$2"; shift;;
     --yes) ASSUME_YES=1;;
     -h|--help) usage; exit 0;;
     *) echo "Unknown argument: $1" >&2; usage >&2; exit 2;;
   esac
   shift
 done
+if [[ -n "$PRESET" ]]; then
+  case "$PRESET" in base|rf-receiver|field-comms) ;; *) echo "Unknown preset: $PRESET" >&2; exit 2;; esac
+  file="$ROOT/presets/$PRESET.conf"
+  [[ -r "$file" ]] || { echo "Preset missing: $file" >&2; exit 2; }
+  preset_profiles='' preset_theme='' preset_automation='' preset_workspace=''
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
+    [[ -z "$key" || "$key" == \#* ]] && continue
+    case "$key" in
+      PROFILES) preset_profiles="$value";;
+      THEME) preset_theme="$value";;
+      AUTOMATION) preset_automation="$value";;
+      WORKSPACE) preset_workspace="$value";;
+      *) echo "Invalid preset field: $key" >&2; exit 2;;
+    esac
+  done < "$file"
+  [[ "$preset_workspace" == "$PRESET" ]] || { echo 'Preset identity mismatch' >&2; exit 2; }
+  [[ -n "$preset_profiles" && -n "$preset_theme" && -n "$preset_automation" ]] || { echo 'Incomplete preset' >&2; exit 2; }
+  ((PROFILES_EXPLICIT)) || PROFILES="$preset_profiles"
+  ((THEME_EXPLICIT)) || THEME="$preset_theme"
+  ((AUTOMATION_EXPLICIT)) || AUTOMATION="$preset_automation"
+fi
 [[ -r /etc/os-release ]] || { echo "Cannot detect OS." >&2; exit 2; }
 # Detect actual package manager, not distro branding alone.
 command -v pacman >/dev/null || { echo "Arch pacman required." >&2; exit 2; }
@@ -115,5 +141,6 @@ fi
 if [[ "$MODE" == apply ]]; then
   [[ "$THEME" == keep ]] || bash "$ROOT/scripts/apply-theme.sh" "$THEME"
   [[ "$AUTOMATION" == off ]] || bash "$ROOT/scripts/configure-automation.sh" "$AUTOMATION"
+  [[ -z "$PRESET" ]] || bash "$ROOT/scripts/stage-preset.sh" "$PRESET"
 fi
 echo "$MODE completed. Review unresolved hardware acceptance gates in docs/ARCHITECTURE.md."
