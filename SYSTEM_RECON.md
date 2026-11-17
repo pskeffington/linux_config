@@ -39,10 +39,12 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Observed at 06:25 EST: `sensors` reported CPU package 99 C, cores 88–99 C, with a 100 C critical threshold; `/sys/class/thermal/thermal_zone0/temp` reported 100000 (100 C). A repeat about 30 seconds later remained at 99 C / 100 C.
 - In the same interval, CPU0 `core_throttle_total_time_ms` rose from 65469 to 69937 (4468 ms). This confirms active/recent thermal throttling while package temperature remained at its critical threshold.
+- Later observation at 06:57 EST: package 60 C, cores 43–56 C, and thermal zone 59 C; load average 1.12–1.62. Temperatures had fallen below the 80 C high threshold without a configured CPU cap.
+- Throttle counters nevertheless rose between the 06:25 and 06:57 observations: CPU0 69937 to 97938 ms (+28.0 s), CPU1 94427 to 219231 ms (+124.8 s). This indicates accumulated thermal throttling during the intervening period, even though the later snapshot was cooler. Counters are cumulative since boot and do not establish the exact temperature or cause during the full interval.
 - Reported CPU frequency was 3.51 GHz and system load average was 2.65–3.61. The process list available to this session did not reveal the workload causing host load.
 - A temporary 2.0 GHz cap was attempted with `sudo -n`; it failed with exit code 1 because a password is required. No CPU limit or other system setting was changed.
 - Current remediation priority: stop CPU-heavy work and physically inspect CPU cooler mounting, fan operation, and airflow after the system is shut down and cooled. Do not run stress tests until temperatures are safe. Recheck idle temperature and throttling after the cooling system is inspected.
-- CPU thermal status: **FAIL / urgent unresolved hardware-cooling condition** pending physical inspection and safe retest. Current evidence cannot distinguish failed fan, poor cooler contact, blocked airflow, or unusually high load.
+- CPU thermal status: **FAIL / urgent unresolved cooling issue** because it reached critical temperature and the cumulative throttle counters continue to rise. Current snapshot is cooler; physical inspection and safe idle retest are still needed. Current evidence cannot distinguish failed fan, poor cooler contact, blocked airflow, or a transient workload/measurement interval.
 
 ### Investigation contract and status
 
