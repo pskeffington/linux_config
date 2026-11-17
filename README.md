@@ -40,3 +40,11 @@ The default is `bash deploy.sh`: read-only plan mode, core only. The `--apply` p
 - [Static syntax and manifest test](tests/static.sh)
 
 Run `bash tests/static.sh` for a local no-install syntax/manifest check. Physical acceptance, package availability, theme integration, and timer operation require validation on the target workstation. RF transmission is outside this deployment.
+
+## Master package library
+The [canonical package registry](packages/master-catalog.json) holds 33 native pacman candidates and six manual-review packages. [Documentation](docs/MASTER_PACKAGE_LIBRARY.md) and [schema](packages/master-catalog.schema.json) define statuses and safety. Keep manifests synchronized with:
+```bash
+python scripts/package-library.py validate --check
+python scripts/package-library.py summary
+```
+On a configured Arch/Garuda workstation, `bash scripts/resolve-package-library.sh` checks repository/installed package availability read-only. Candidate status is **not** proof of package availability. The existing `deploy.sh` continues to use checked-in profile manifests. CI and manual host acceptance must pass before release.
