@@ -4,7 +4,8 @@
 Fresh Garuda / Arch Linux, pacman, standard non-root account. KDE Plasma theming is optional and applied only in a live KDE session. Running from other distributions is unsupported.
 
 ## Deployment contract
-1. Install git with `sudo pacman -Syu --needed git`.
+1. Install git with `garuda-update
+sudo pacman -S --needed git`.
 2. Clone `https://github.com/pskeffington/linux_config.git`.
 3. Until PR #1 is merged, switch to `scaffold/arch-rf-field-comms`.
 4. Run `bash deploy.sh --plan --profiles core,sdr,ham`.
