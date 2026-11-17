@@ -1,0 +1,5 @@
+# Amateur radio and packet candidates; some may be AUR-only depending on repositories
+hamlib
+fldigi
+direwolf
+gpredict
