@@ -25,10 +25,23 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 ### CPU security status reported by this kernel
 
-- Gather Data Sampling: vulnerable, reported as lacking microcode
+- Gather Data Sampling (GDS): `Vulnerable: No microcode`; this is a live, current-kernel status, not an inference from the package being installed
+- Exact CPU identity: Intel Core i7-6700K, family 6/model 94/stepping 3 (CPUID signature `0x506e3`)
+- Loaded microcode: `0xf0`; the installed `intel-ucode 20261110-1` image contains one matching `0x506e3` record at revision `0xf0`, confirming early microcode loading is working but this image does not update the CPU beyond `0xf0`
+- Intel's current affected-processor list shows CPUID `506E3` with MCU level `0xf6` and GDS requiring MCU mitigation. Intel cautions that end-of-servicing-life CPUs may be omitted and their mitigation status may not be evaluated, so this entry does not establish that `0xf6` is available or supported for this particular i7-6700K system.
+- ASUS lists BIOS 3801 (2018-04-27) as the newest BIOS for the MAXIMUS VIII HERO ALPHA; its notes mention updated CPU microcode but predate the GDS advisory. No newer board BIOS is listed in the reviewed support page.
+- Linux documents `gather_data_sampling=force` as a fallback: when updated GDS microcode is unavailable, it disables AVX use by disabling XSAVE YMM support. Software that incorrectly checks AVX without checking XSAVE YMM can break. This is not enabled in the current boot configuration. Do not enable it without considering AVX2-dependent applications and retaining a boot-recovery path.
 - MDS and MMIO stale data: mitigations active; kernel reports SMT remains vulnerable
 - L1TF, Meltdown, Retbleed, Spectre v1/v2, SRBDS, Speculative Store Bypass, and TSX Async Abort: mitigations reported active
 - These are kernel status strings, not an independent security assessment. Review firmware and microcode updates for this CPU.
+
+### GDS follow-up (2026-11-17)
+
+- Observed: `/sys/devices/system/cpu/vulnerabilities/gather_data_sampling` and `lscpu` both report `Vulnerable: No microcode`.
+- Observed: kernel log reports microcode loaded early from `0xc2` to `0xf0`; current per-CPU microcode sysfs also reports `0xf0`.
+- Observed: kernel command line does not include `gather_data_sampling=off`, `mitigations=off`, or a forced GDS option. The kernel default is active, but the GDS microcode capability needed to mitigate this CPU is absent.
+- Intel's Linux kernel documentation confirms `gather_data_sampling=force` uses GDS-capable microcode when available, otherwise disables AVX. This remediation was investigated but not applied; no changes have been made to boot configuration or firmware.
+- Sources: [Linux GDS documentation](https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/gather_data_sampling.html), [Intel affected processor list](https://github.com/intel/Intel-affected-processor-list/blob/main/Intel_affected_processor_list.csv), [ASUS BIOS support page](https://www.asus.com/us/supportonly/maximus%20viii%20hero%20alpha/helpdesk_bios/).
 
 ## Memory and storage
 
