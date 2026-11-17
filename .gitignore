@@ -1,0 +1,7 @@
+/evidence/*
+!/evidence/.gitkeep
+*.iq
+*.cfile
+*.sigmf-data
+*.wav
+__pycache__/
