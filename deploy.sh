@@ -34,6 +34,9 @@ done
 [[ -r /etc/os-release ]] || { echo "Cannot detect OS." >&2; exit 2; }
 # Detect actual package manager, not distro branding alone.
 command -v pacman >/dev/null || { echo "Arch pacman required." >&2; exit 2; }
+. /etc/os-release
+[[ "${ID:-}" == "garuda" ]] || { echo "This deployment target is Garuda Linux; found ${ID:-unknown}." >&2; exit 2; }
+command -v garuda-update >/dev/null || { echo "Garuda update tooling missing; use Garuda Toolbox repair before deploying." >&2; exit 2; }
 [[ $EUID -ne 0 ]] || { echo "Run as regular user; sudo is invoked only for package operations." >&2; exit 2; }
 case "$THEME" in keep|breeze-dark|breeze-light) ;; *) echo "Invalid theme" >&2; exit 2;; esac
 case "$AUTOMATION" in off|inventory-weekly) ;; *) echo "Invalid automation" >&2; exit 2;; esac
@@ -77,9 +80,10 @@ if [[ "$MODE" == apply ]]; then
     read -r -p 'Run full system upgrade and install resolved packages? [y/N] ' answer
     [[ "$answer" =~ ^[yY]$ ]] || { echo 'Aborted.'; exit 1; }
   fi
-  sudo pacman -Syu --noconfirm
+  echo "Running Garuda-supported full system update (interactive, without AUR)..." 
+  garuda-update
 else
-  echo 'Download mode uses current sync databases; run a full upgrade before installation.'
+  echo 'Download mode uses current sync databases; run garuda-update first to avoid partial upgrades.'
   if ((ASSUME_YES==0)); then
     read -r -p 'Download resolvable packages to pacman cache? [y/N] ' answer
     [[ "$answer" =~ ^[yY]$ ]] || { echo 'Aborted.'; exit 1; }
@@ -103,9 +107,9 @@ if (("${#unresolved[@]}" > 0)); then
 fi
 if (("${#available[@]}" > 0)); then
   if [[ "$MODE" == download ]]; then
-    sudo pacman -Sw --needed --noconfirm -- "${available[@]}"
+    sudo pacman -Sw --needed -- "${available[@]}"
   else
-    sudo pacman -S --needed --noconfirm -- "${available[@]}"
+    sudo pacman -S --needed -- "${available[@]}"
   fi
 fi
 if [[ "$MODE" == apply ]]; then
