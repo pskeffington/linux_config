@@ -5,7 +5,8 @@ Reproducible Arch Linux / Garuda workstation configuration for RF field communic
 ## Fresh Garuda: clone and deploy
 
 ```bash
-sudo pacman -Syu --needed git
+garuda-update
+sudo pacman -S --needed git
 git clone https://github.com/pskeffington/linux_config.git
 cd linux_config
 git switch scaffold/arch-rf-field-comms
@@ -48,3 +49,6 @@ python scripts/package-library.py validate --check
 python scripts/package-library.py summary
 ```
 On a configured Arch/Garuda workstation, `bash scripts/resolve-package-library.sh` checks repository/installed package availability read-only. Candidate status is **not** proof of package availability. The existing `deploy.sh` continues to use checked-in profile manifests. CI and manual host acceptance must pass before release.
+
+### Garuda alignment
+Follow [Garuda-specific setup, preflight, desktop preservation and recovery guidance](docs/GARUDA_INSTALL_ALIGNMENT.md). The installer now runs `garuda-update` for full upgrades; it does not silently update AUR packages, replace Garuda's default theme, or change kernel/boot settings.
