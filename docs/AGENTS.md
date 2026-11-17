@@ -35,3 +35,6 @@ Treat `packages/master-catalog.json` as the canonical candidate package catalog;
 5. Never promote manual/AUR candidates into pacman install lists automatically or claim TX acceptance.
 
 The master operator skill in `agent_skills` proposes capability groupings; only the reviewed `linux_config` source can change host package operations.
+
+## Garuda distribution rules
+Follow `docs/GARUDA_INSTALL_ALIGNMENT.md`: use `garuda-update` (non-root invocation) for OS updates, `pacman -S` for reviewed installed packages, preserve Dr460nized/Mokka desktop defaults, read `garuda-health` findings, and never run snapshot-reset commands automatically. Validate repo origin of Chaotic-AUR packages independently from Arch official packages.
