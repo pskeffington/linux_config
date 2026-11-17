@@ -38,8 +38,10 @@ No radio frequencies, PTT, repeater settings, CAT controls, antenna selection, L
 2. `bash deploy.sh --plan --preset <name>`: read-only resolution.
 3. `bash deploy.sh --download --preset <name>`: cache packages after a full Garuda update.
 4. `bash deploy.sh --apply --preset <name>`: verified native package install and safe user configuration staging.
-5. `bash scripts/verify-deployment.sh <name>`: read-only application and workspace discovery.
+5. `bash scripts/verify-deployment.sh <name>`: read-only application, workspace and adapter inventory.
 6. Independent device/driver/SDR tests. No radio TX acceptance inferred.
+
+The adapter inventory matches only documented example USB IDs, checks installed package state and reports bound USB interface drivers when sysfs exposes them. It does not open device files, run vendor APIs, probe network-connected USRPs, or prove reception. See `hardware/ADAPTER_MATRIX.tsv` for source and confidence boundaries.
 
 ## Recovery
 System package transactions are handled by Garuda Update and pacman; use the supported Garuda Btrfs/snapshot recovery process if available. To remove only the user-level files, inspect `~/.config/linux-config`, `~/.local/share/linux-config` and launchers whose filenames begin `linux-config-`; **do not use a blind recursive deletion**. No service is enabled by a preset. Applications remain manually launched.

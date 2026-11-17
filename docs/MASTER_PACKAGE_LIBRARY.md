@@ -24,7 +24,8 @@ bash scripts/resolve-package-library.sh
 
 ## Next phases
 - Resolve actual sync-repository names and package versions on Garuda; review `soapyrtlsdr`, `rtl_433`, and separate GNU Radio components particularly carefully.
-- Add model-specific Airspy, USRP, HackRF, SDRplay, USB audio, serial adapters and firmware compatibility without modifying attached hardware.
+- `hardware/ADAPTER_MATRIX.tsv` now records source-verified example coverage for Airspy, USRP, HackRF, SDRplay and common USB-serial bridges. `scripts/verify-rf-adapters.sh` provides non-mutating USB/package inventory; neither is a hardware acceptance result.
+- Add model-specific USB audio and firmware compatibility without modifying attached hardware.
 - Capture package dependencies, license, source provenance, risk, and version pins from observed authoritative metadata. Don't invent versions in the master catalog.
 - Expand separately approved profiles for `mesh`, `digital-voice`, `field-digital` and offline maps/security once compatible deployment code and tests exist.
 - Gate every selected bundle with independent build, offline fixtures, host packages and physical hardware acceptance.

@@ -5,6 +5,8 @@ ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 preset="${1:-base}"
 case "$preset" in base|rf-receiver|field-comms) ;; *) echo 'Usage: bash scripts/verify-deployment.sh {base|rf-receiver|field-comms}' >&2; exit 2;; esac
 bash "$ROOT/scripts/garuda-preflight.sh"
+echo '--- Read-only RF adapter inventory (not receive acceptance) ---'
+bash "$ROOT/scripts/verify-rf-adapters.sh"
 echo '--- Installed application checks (not hardware acceptance) ---'
 for exe in git python gqrx gnuradio-companion rtl_test fldigi direwolf; do
   if command -v "$exe" >/dev/null 2>&1; then

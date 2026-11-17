@@ -37,6 +37,7 @@ The default is `bash deploy.sh`: read-only plan mode, core only. The `--apply` p
 - [Codex instructions](docs/AGENTS.md)
 - [Source-linked operator literature matrix](literature/RF_FIELD_COMMS_MATRIX.tsv)
 - [Native candidate manifests](packages/)
+- [Source-backed RF adapter matrix](hardware/ADAPTER_MATRIX.tsv)
 - [Separate AUR review queue](packages/aur-review.tsv)
 - [Static syntax and manifest test](tests/static.sh)
 
@@ -60,4 +61,4 @@ bash deploy.sh --plan --preset rf-receiver
 bash deploy.sh --apply --preset rf-receiver
 bash scripts/verify-deployment.sh rf-receiver
 ```
-Presets: `base` (core utilities), `rf-receiver` (core + SDR) and `field-comms` (core + SDR + ham + desktop). Each preserves Garuda's theme, disables user automations and never configures a transmitter. Deployment stages private user-level folders and manual-launch desktop entries only after successful installation. See [preconfigured deployment guide](docs/PRECONFIGURED_DEPLOYMENT.md). Software/driver availability and device hardware still require verification on the actual host.
+Presets: `base` (core utilities), `rf-receiver` (core + SDR) and `field-comms` (core + SDR + ham + desktop). Each preserves Garuda's theme, disables user automations and never configures a transmitter. Deployment stages private user-level folders and manual-launch desktop entries only after successful installation. Verification includes a read-only adapter inventory; it does not open SDR/serial devices or perform network discovery. See [preconfigured deployment guide](docs/PRECONFIGURED_DEPLOYMENT.md). Software/driver availability and device hardware still require verification on the actual host.

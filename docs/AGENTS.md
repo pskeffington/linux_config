@@ -15,7 +15,7 @@ Operate only in `linux_config`. Do not modify FIDES, TRANS, SDR Studio, or other
 10. Keep PR small and CI portable; shell syntax checks may run offline with `bash -n scripts/*.sh`.
 
 ## Next focus
-Verify `pacman -Si` mappings for every candidate; add USRP, Airspy, HackRF, SDRplay and USB-serial hardware adapter matrices without treating physical presence as confirmed. Then prepare vendor-specific receive-only acceptance scripts and a structured operator literature expansion.
+`hardware/ADAPTER_MATRIX.tsv` records source-verified examples for USRP, Airspy, HackRF, SDRplay and common USB-serial families. `scripts/verify-rf-adapters.sh` reports matching local USB IDs, installed native userspace packages, and utility presence without opening devices or probing networks. These are inventory checks, not package or receive acceptance. Next, capture target-Garuda `pacman -Si` origin/version evidence and prepare vendor-specific receive-only acceptance procedures for actual attached hardware. Keep SDRplay manual-review until its vendor support is confirmed for the target distribution.
 
 ## Clone-and-deploy contract
 - `deploy.sh` is the canonical entrypoint. Every new package group must be in `packages/<profile>.txt` and accepted explicitly by its profile switch.

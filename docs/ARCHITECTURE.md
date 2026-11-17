@@ -20,6 +20,7 @@ Reproducible, modular deployment for lawful amateur-radio, SDR, packet, field co
 ## Repository conventions
 - `packages/*.txt`: candidate native package identifiers, checked with `pacman -Si` before install.
 - `packages/aur-review.tsv`: optional upstream/AUR work requiring manual review.
+- `hardware/ADAPTER_MATRIX.tsv`: source-backed adapter examples and package candidates; entries do not imply installation or connected hardware.
 - `scripts/`: idempotent read-only inventory and explicit-install entrypoints.
 - `config/examples/`: templates only; no credentials, callsigns, private keys, or frequencies hardcoded.
 - `literature/`: attributable source matrix; label standards, maintainers, practitioner guides and field reports separately.
@@ -30,9 +31,12 @@ Reproducible, modular deployment for lawful amateur-radio, SDR, packet, field co
 1. RF-00 baseline and host inventory without root.
 2. Run `scripts/check-packages.sh` to classify native package availability.
 3. Install minimal profile with `scripts/install-profile.sh core` after operator approval.
-4. Confirm device IDs and dedicated official-driver package support before extra firmware or kernel changes.
-5. Verify IQ and audio processing offline; store test fixtures and SHA-256 evidence.
-6. For any actual amateur TX: verify operator privileges, local band rules, equipment configuration, antenna and power limits, and receive-safe test plans separately.
+4. Review `hardware/ADAPTER_MATRIX.tsv`; run `bash scripts/verify-rf-adapters.sh` for USB IDs, installed native userspace packages and utility presence only.
+5. Confirm device IDs and dedicated official-driver package support before extra firmware or kernel changes.
+6. Verify IQ and audio processing offline; store test fixtures and SHA-256 evidence.
+7. For any actual amateur TX: verify operator privileges, local band rules, equipment configuration, antenna and power limits, and receive-safe test plans separately.
+
+The adapter verifier never opens serial ports or SDR devices and never performs UHD/network discovery. A matching VID:PID is an example-family match only; it does not establish an exact model, successful driver binding, IQ capture, or receive acceptance. SDRplay remains manual review because vendor Linux support is documented for Ubuntu LTS through 24.04, not Garuda.
 
 ## Safety and compliance
 No scanning of private or encrypted transmissions for unauthorized access; no transmission without authorization. Amateur radio band plans are voluntary coordination guidance and do not substitute for FCC Part 97 or applicable national rules. Do not expose RTL-TCP/Soapy network receivers publicly by default. Do not assume a field/tactical product implies military use or permits jamming. Every hardware TX path is an explicitly gated future workstream.

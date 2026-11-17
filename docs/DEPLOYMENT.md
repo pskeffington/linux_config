@@ -12,6 +12,7 @@ sudo pacman -S --needed git`.
 5. Run `bash deploy.sh --download --profiles core,sdr,ham` to cache available native packages, or `bash deploy.sh --apply --profiles core,sdr,ham` to fully update and install.
 6. Optional desktop: `bash deploy.sh --apply --profiles core,desktop --theme breeze-dark --automation inventory-weekly`.
 7. Use `bash scripts/inventory-rf.sh` to collect non-root evidence; review private evidence locally.
+8. Use `bash scripts/verify-rf-adapters.sh` for read-only local USB-ID, package and utility discovery. It writes nothing and does not open serial ports or SDR devices.
 
 Default plan performs no writes. Download and apply never resolve or install AUR packages. Unresolved package identifiers cause a non-zero exit before package installation (after system upgrade in apply mode). Do not assume availability of every candidate in all Arch derivatives; update package manifests with verified identifiers if required. Only apply touches theme/timer, and both are opt-in.
 
@@ -27,5 +28,6 @@ The only initial automation is weekly read-only hardware inventory via a systemd
 - Apply refuses unresolved package identifiers to avoid inadvertently incomplete profiles.
 - Theme only applies to matching live KDE environments.
 - Evidence never enters Git by default.
+- Adapter presence checks only match example USB IDs and installed package/tool state; they do not prove driver operation or reception. Network USRP discovery and SDRplay API use remain operator-led.
 - Offline repository authorship is not hardware validation; verify with `bash -n deploy.sh scripts/*.sh` and then run on target Garuda.
 - No PTT, transmit presets, driver blacklisting, firmware flashes or udev privilege escalation.
