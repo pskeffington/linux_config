@@ -16,3 +16,12 @@ Operate only in `linux_config`. Do not modify FIDES, TRANS, SDR Studio, or other
 
 ## Next focus
 Verify `pacman -Si` mappings for every candidate; add USRP, Airspy, HackRF, SDRplay and USB-serial hardware adapter matrices without treating physical presence as confirmed. Then prepare vendor-specific receive-only acceptance scripts and a structured operator literature expansion.
+
+## Clone-and-deploy contract
+- `deploy.sh` is the canonical entrypoint. Every new package group must be in `packages/<profile>.txt` and accepted explicitly by its profile switch.
+- Keep `--plan` read-only, `--download` cache-only, and `--apply` install-plus-opt-in-configuration.
+- On a fresh Arch/Garuda target, the user should need only git, clone, and one `bash deploy.sh --apply --profiles ...` command.
+- KDE theme must default to `keep`; never silently replace Garuda's selected theme. Always check for installed assets and write user-level backups.
+- Automations must be user-scoped, opt-in, and documented with disable instructions. No RF transmit or privileged background daemon.
+- Run `bash tests/static.sh` before packaging; record the result from a real machine rather than claiming GitHub file creation is test execution.
+- GitHub is the authoritative source for all source modifications. Keep acceptance evidence private on each target machine.
