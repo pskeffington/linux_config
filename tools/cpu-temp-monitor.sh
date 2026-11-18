@@ -6,7 +6,7 @@ log_file="$log_dir/temperature.csv"
 interval="${CPU_TEMP_MONITOR_INTERVAL:-10}"
 max_bytes=5242880
 keep=4
-header='timestamp,cpu_package_c,cpu_core0_c,cpu_core1_c,cpu_core2_c,cpu_core3_c,scaling_cur_freq_khz,scaling_max_freq_khz,core_throttle_count,package_throttle_count,cpu_busy_pct,load1'
+header='timestamp,cpu_package_c,cpu_core0_c,cpu_core1_c,cpu_core2_c,cpu_core3_c,scaling_cur_freq_khz,scaling_max_freq_khz,core_throttle_count,package_throttle_count,core_throttle_max_time_ms,package_throttle_max_time_ms,core_throttle_total_time_ms,package_throttle_total_time_ms,cpu_busy_pct,load1'
 
 mkdir -p "$log_dir"
 
@@ -75,6 +75,10 @@ while :; do
     maximum=$(read_count /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     core_throttle=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_count)
     package_throttle=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/package_throttle_count)
+    core_throttle_max=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_max_time_ms)
+    package_throttle_max=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/package_throttle_max_time_ms)
+    core_throttle_total=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_total_time_ms)
+    package_throttle_total=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/package_throttle_total_time_ms)
     counters=$(awk '/^cpu / { total=0; for (i=2; i<=NF; i++) total += $i; if (NF >= 10) total -= $10; if (NF >= 11) total -= $11; idle=$5+$6; printf "%.0f %.0f", total, idle; exit }' /proc/stat)
     total=${counters%% *}
     idle=${counters#* }
@@ -85,8 +89,10 @@ while :; do
     previous_total=$total
     previous_idle=$idle
     load1=$(awk '{ print $1 }' /proc/loadavg)
-    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' \
+    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' \
         "$timestamp" "$package" "$core0" "$core1" "$core2" "$core3" \
-        "$current" "$maximum" "$core_throttle" "$package_throttle" "$busy" "$load1" >> "$log_file"
+        "$current" "$maximum" "$core_throttle" "$package_throttle" \
+        "$core_throttle_max" "$package_throttle_max" \
+        "$core_throttle_total" "$package_throttle_total" "$busy" "$load1" >> "$log_file"
     sleep "$interval"
 done
