@@ -39,5 +39,20 @@ followed by regenerating GRUB configuration, it adds a separate entry while
 preserving the normal first/default entry (`GRUB_DEFAULT=0`). The entry is
 still opt-in: it disables AVX only if explicitly selected. The generator has
 been validated against the current kernel/initrd paths, LUKS UUID, and root
-filesystem UUID. No GRUB file or boot default has been changed as part of this
-investigation.
+filesystem UUID. To install it manually from the repository root:
+
+```sh
+sudo cp -a /boot/grub/grub.cfg /boot/grub/grub.cfg.pre-gds
+sudo install -m 0755 tools/grub-gds-fallback /etc/grub.d/41_gds_fallback
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo grub-script-check /boot/grub/grub.cfg
+```
+
+Confirm `GRUB_DEFAULT=0` remains set and the generated entry appears after the
+normal Garuda entries. To roll back, remove `/etc/grub.d/41_gds_fallback` and
+regenerate GRUB, or restore the saved `grub.cfg.pre-gds`. Do not select the
+fallback entry unless prepared to run without AVX for that boot.
+
+Installation was attempted from the agent session but stopped because it could
+not read `/boot/grub/grub.cfg` to make the required backup. Neither the custom
+entry nor the backup was created; no boot setting was changed.
