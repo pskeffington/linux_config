@@ -33,26 +33,39 @@ software. Reboot normally to return to the original feature set. Do not set
 `gather_data_sampling=force` in the default GRUB command line unless the AVX
 tradeoff is accepted.
 
-An optional menu-entry generator is available at
-`tools/grub-gds-fallback`. If installed as `/etc/grub.d/41_gds_fallback` and
-followed by regenerating GRUB configuration, it adds a separate entry while
-preserving the normal first/default entry (`GRUB_DEFAULT=0`). The entry is
-still opt-in: it disables AVX only if explicitly selected. The generator has
-been validated against the current kernel/initrd paths, LUKS UUID, and root
-filesystem UUID. To install it manually from the repository root:
+The menu-entry generator is installed as `/etc/grub.d/41_gds_fallback` and adds
+an opt-in entry after the normal Garuda entries. The original configuration is
+backed up at `/boot/grub/grub.cfg.pre-gds`; it was byte-for-byte identical to
+the original before the update. The active configuration passed
+`grub-script-check`, its header retains `set default="0"`, and the normal
+Garuda entry remains first. The machine has not rebooted or selected the
+fallback, so the current kernel remains vulnerable.
+
+The installed entry is for one-boot testing. It appends
+`gather_data_sampling=force`, which on this CPU is expected to report
+`Mitigation: AVX disabled, no microcode`. Selecting it disables AVX; check
+AVX/XSAVE-dependent applications first. To verify the test, run:
 
 ```sh
-sudo cp -a /boot/grub/grub.cfg /boot/grub/grub.cfg.pre-gds
-sudo install -m 0755 tools/grub-gds-fallback /etc/grub.d/41_gds_fallback
-sudo grub-mkconfig -o /boot/grub/grub.cfg
-sudo grub-script-check /boot/grub/grub.cfg
+cat /sys/devices/system/cpu/vulnerabilities/gather_data_sampling
 ```
 
-Confirm `GRUB_DEFAULT=0` remains set and the generated entry appears after the
-normal Garuda entries. To roll back, remove `/etc/grub.d/41_gds_fallback` and
-regenerate GRUB, or restore the saved `grub.cfg.pre-gds`. Do not select the
-fallback entry unless prepared to run without AVX for that boot.
+## Installing or rolling back the entry
 
-Installation was attempted from the agent session but stopped because it could
-not read `/boot/grub/grub.cfg` to make the required backup. Neither the custom
-entry nor the backup was created; no boot setting was changed.
+The authenticated host command path used in this environment is documented in
+[`codex-polkit-auth.md`](codex-polkit-auth.md). Use Polkit only after the user
+authorizes the specific system change. The GRUB update was performed in stages:
+back up the current config, install the generator, generate a temporary config,
+run `grub-script-check`, confirm default entry 0 and menu ordering, then install
+the validated file. Do not write an unvalidated generated config to the boot
+path.
+
+To roll back while retaining the current running system:
+
+```sh
+pkexec /bin/sh -c 'rm -f /etc/grub.d/41_gds_fallback; cp -a /boot/grub/grub.cfg.pre-gds /boot/grub/grub.cfg; grub-script-check /boot/grub/grub.cfg'
+```
+
+This restores the saved configuration and removes the optional generator. The
+fallback must remain opt-in unless the AVX compatibility tradeoff has been
+accepted.
