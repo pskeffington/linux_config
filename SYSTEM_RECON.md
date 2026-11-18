@@ -134,6 +134,8 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Post-remediation check at 11:03 EST: Turbo remains enabled (`no_turbo=0`), policy max remains 4,200,000 kHz, and the monitor is recording normally. The 11:03:35 row showed 2.40 GHz current / 4.2 GHz max, package 35 C, CPU busy 29.6%, and load 2.91. Per-core and package throttle-duration totals remain unchanged at 156,472 / 290,071 / 38,382 / 38,430 / 475,840 ms. Direct sensors at 11:03:38 showed package 36 C. GDS sysfs still reports `Vulnerable: No microcode` because the machine has not rebooted into the opt-in fallback entry.
 
+- Active desktop GPU verification at 11:05 EST: `DISPLAY=:0 glxinfo -B` exited 0 and reported accelerated AMD Radeon RX 9060 XT (`radeonsi`, gfx1200), Mesa 26.2.7, DRM 3.64, on kernel 7.3.4-zen2-2. `DISPLAY=:0 vulkaninfo --summary` exited 0 and listed AMD RADV for PCI device 1002:7590 as the discrete GPU; llvmpipe appears only as a secondary CPU device. This confirms the active desktop is hardware-accelerated. The KWin process environment could not be read due `/proc/<pid>/environ` permission denial, so whether `KWIN_FORCE_SW_CURSOR=1` is active remains unverified; the startup script is staged for a fresh Plasma login. Kernel journal still contains 464 startup RA24 errors.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
