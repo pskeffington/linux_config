@@ -33,4 +33,11 @@ software. Reboot normally to return to the original feature set. Do not set
 `gather_data_sampling=force` in the default GRUB command line unless the AVX
 tradeoff is accepted.
 
-No GRUB file or boot default has been changed as part of this investigation.
+An optional menu-entry generator is available at
+`tools/grub-gds-fallback`. If installed as `/etc/grub.d/41_gds_fallback` and
+followed by regenerating GRUB configuration, it adds a separate entry while
+preserving the normal first/default entry (`GRUB_DEFAULT=0`). The entry is
+still opt-in: it disables AVX only if explicitly selected. The generator has
+been validated against the current kernel/initrd paths, LUKS UUID, and root
+filesystem UUID. No GRUB file or boot default has been changed as part of this
+investigation.

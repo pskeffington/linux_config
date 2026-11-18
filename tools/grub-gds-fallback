@@ -1,0 +1,14 @@
+#!/bin/sh
+cat <<'GRUB_ENTRY'
+menuentry 'Garuda Linux Zen — GDS fallback (AVX disabled)' --class garuda {
+    insmod part_gpt
+    insmod btrfs
+    insmod cryptodisk
+    insmod luks
+    insmod luks2
+    cryptomount -u 861805b2-1542-45f2-b2bd-54f26eb85ce5
+    search --no-floppy --fs-uuid --set=root 87837d99-cc44-4029-99ae-614804f391de
+    linux /@/boot/vmlinuz-linux-zen root=UUID=87837d99-cc44-4029-99ae-614804f391de rw rootflags=subvol=@ quiet rd.luks.uuid=861805b2-1542-45f2-b2bd-54f26eb85ce5 rd.luks.uuid=dcc70ac2-daa2-45c3-ba4a-1b25a9da3c24 resume=/dev/mapper/luks-dcc70ac2-daa2-45c3-ba4a-1b25a9da3c24 loglevel=3 gather_data_sampling=force
+    initrd /@/boot/intel-ucode.img /@/boot/initramfs-linux-zen.img
+}
+GRUB_ENTRY
