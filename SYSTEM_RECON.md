@@ -140,6 +140,14 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Follow-up at 11:23 EST after the protective cap was restored: the CPU monitor service reports `active` and `enabled`; the newest rows show package 35–41 C, 26–30% busy, and a 3.0 GHz max. Package throttle time remains 520,493 ms with no increase since 11:18:31. Direct sensors read 37 C package, and `no_turbo=1` / `scaling_max_freq=3000000` remain active. GDS remains `Vulnerable: No microcode` in the running boot. The active journal still has 464 RA24 startup errors. Installed package versions remain Linux Zen 7.3.4.zen2-2, Mesa 26.2.7-1, libdrm 2.4.134-1 and KWin 6.8.3-1; a current mainline source check still lacks `SURFACE_PIXEL_FORMAT_GRPH_RGBA8888`, and the AMD fix remains a posted patch series.
 
+
+### Live follow-up (2026-11-18 11:43 EST)
+
+- The persistent monitor continued appending through 11:43:50. During the latest three samples (11:43:29–11:43:50), package temperatures ranged 34–36 C, aggregate CPU busy fell from 35.1% to 29.8%, and the policy maximum remained 3,000,000 kHz. Direct sensors at 11:43:33 read package 35 C and cores 30–35 C.
+- Runtime CPU policy remains protective: `intel_pstate/no_turbo=1` and policy maximum 3,000,000 kHz. The monitor's package cumulative thermal-throttle duration remains 520,493 ms, unchanged from the 11:23 observation. This confirms no additional package throttle duration accumulated in the observed period; it does not erase or explain the earlier Turbo-associated critical excursions.
+- The current kernel still reports `Vulnerable: No microcode`; `/proc/cmdline` contains no GDS fallback parameter. No reboot or fallback selection occurred. The installed GDS entry remains unverified at runtime.
+- This check was read-only; no CPU, boot, firmware, or desktop-session settings were changed.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
