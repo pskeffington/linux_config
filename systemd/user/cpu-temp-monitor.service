@@ -1,0 +1,15 @@
+[Unit]
+Description=Persistent CPU temperature and thermal throttle monitor
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/home/sysadmin/github/linux_config/tools/cpu-temp-monitor.sh
+Restart=always
+RestartSec=5s
+Environment=CPU_TEMP_MONITOR_INTERVAL=10
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=default.target
