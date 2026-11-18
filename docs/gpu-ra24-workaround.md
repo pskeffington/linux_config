@@ -21,7 +21,14 @@ The script is installed at
 next Plasma login. Remove that symlink and log out/in to roll back. No kernel,
 GPU firmware, display mode, or running session was changed by installing it.
 
-After the next login, compare the kernel journal for `RA24`, KWin atomic
-modeset failures and output configuration failures. A successful trial is not
-proof of hardware health; it only confirms that avoiding the hardware cursor
-plane suppresses this driver path.
+A host-context desktop query at 11:05 EST confirmed OpenGL acceleration on
+the RX 9060 XT (`radeonsi`, gfx1200; Mesa 26.2.7) and Vulkan GPU0 via AMD RADV
+for PCI device 1002:7590; llvmpipe is only the secondary CPU device. The KWin
+process environment could not be inspected because `/proc/<pid>/environ` denied
+access, so the variable's status in the existing session is unverified. The
+startup script is intended for the next Plasma login.
+
+After that login, compare the kernel journal for `RA24`, KWin atomic modeset
+failures and output configuration failures. A successful trial is not proof of
+hardware health; it only confirms that avoiding the hardware cursor plane
+suppresses this driver path.
