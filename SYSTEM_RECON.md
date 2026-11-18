@@ -119,6 +119,9 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Short natural-load follow-up at 10:30 EST: monitor samples at 10:30:22 / 10:30:32 / 10:30:42 showed package temperatures 68 / 67 / 71 C, CPU busy 62.8 / 55.9 / 62.3%, and 1-minute load 3.77 / 3.89 / 3.99, with frequency at the existing 3.0 GHz cap. Package thermal-throttle duration remained 475,840 ms and core0 remained 156,472 ms; all per-core totals were unchanged. A spot sensor read at 10:30:48 showed package 71 C and cores 65–71 C. No synthetic load was applied. Temperature is below the 80 C high threshold and the monitored interval shows no new thermal throttle time, but the elevated reading under ordinary host activity warrants continued monitoring; the workload is not visible in this sandbox.
 
+- Natural-load CPU follow-up at 10:31 EST: monitor samples at 10:31:02 / 10:31:13 / 10:31:23 / 10:31:33 showed package temperatures 72 / 75 / 76 / 76 C and aggregate busy 63.1 / 63.3 / 70.9 / 64.5%, with load rising from 4.61 to 4.82. The current frequency stayed near the 3.0 GHz cap; direct sensors at 10:31:34 showed package 76 C and cores 71–76 C. All core and package throttle-duration totals stayed unchanged. Temperature leveled below the 80 C high threshold over the last two samples; the active host workload remains unknown in this sandbox.
+- Attempted to load the kernel-supported `nct6775` hardware-monitor module for motherboard fan/VRM telemetry. The elevated command failed because sudo requires a password and a terminal; the module was not loaded and no system state changed. Board-level thermal/fan correlation remains unavailable from this session.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
