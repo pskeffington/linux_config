@@ -6,6 +6,7 @@ log_file="$log_dir/temperature.csv"
 interval="${CPU_TEMP_MONITOR_INTERVAL:-10}"
 max_bytes=5242880
 keep=4
+header='timestamp,cpu_package_c,cpu_core0_c,cpu_core1_c,cpu_core2_c,cpu_core3_c,scaling_cur_freq_khz,scaling_max_freq_khz,core_throttle_count,package_throttle_count,cpu_busy_pct,load1'
 
 mkdir -p "$log_dir"
 
@@ -36,8 +37,9 @@ read_count() {
 
 rotate_log() {
     [ -f "$log_file" ] || return 0
+    force=${1:-no}
     bytes=$(wc -c < "$log_file")
-    [ "$bytes" -lt "$max_bytes" ] && return 0
+    if [ "$force" != force ] && [ "$bytes" -lt "$max_bytes" ]; then return 0; fi
     n=$keep
     while [ "$n" -gt 1 ]; do
         previous=$((n - 1))
@@ -48,10 +50,16 @@ rotate_log() {
 }
 
 write_header_if_needed() {
-    [ -s "$log_file" ] && return 0
-    printf 'timestamp,cpu_package_c,cpu_core0_c,cpu_core1_c,cpu_core2_c,cpu_core3_c,scaling_cur_freq_khz,scaling_max_freq_khz,core_throttle_count,package_throttle_count\n' > "$log_file"
+    if [ -s "$log_file" ]; then
+        old_header=$(head -n 1 "$log_file")
+        [ "$old_header" = "$header" ] && return 0
+        rotate_log force
+    fi
+    printf '%s\n' "$header" > "$log_file"
 }
 
+previous_total=
+previous_idle=
 write_header_if_needed
 
 while :; do
@@ -67,8 +75,18 @@ while :; do
     maximum=$(read_count /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq)
     core_throttle=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/core_throttle_count)
     package_throttle=$(read_count /sys/devices/system/cpu/cpu0/thermal_throttle/package_throttle_count)
-    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' \
+    counters=$(awk '/^cpu / { total=0; for (i=2; i<=NF; i++) total += $i; if (NF >= 10) total -= $10; if (NF >= 11) total -= $11; idle=$5+$6; printf "%.0f %.0f", total, idle; exit }' /proc/stat)
+    total=${counters%% *}
+    idle=${counters#* }
+    busy=
+    if [ -n "$previous_total" ] && [ "$total" -gt "$previous_total" ]; then
+        busy=$(awk -v t="$total" -v pt="$previous_total" -v i="$idle" -v pi="$previous_idle" 'BEGIN { printf "%.1f", 100 * ((t - pt) - (i - pi)) / (t - pt) }')
+    fi
+    previous_total=$total
+    previous_idle=$idle
+    load1=$(awk '{ print $1 }' /proc/loadavg)
+    printf '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n' \
         "$timestamp" "$package" "$core0" "$core1" "$core2" "$core3" \
-        "$current" "$maximum" "$core_throttle" "$package_throttle" >> "$log_file"
+        "$current" "$maximum" "$core_throttle" "$package_throttle" "$busy" "$load1" >> "$log_file"
     sleep "$interval"
 done
