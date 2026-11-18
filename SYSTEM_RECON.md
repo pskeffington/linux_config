@@ -91,6 +91,15 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Follow-up: inxi reported llvmpipe for both OpenGL and Vulkan while the amdgpu kernel driver was loaded. Confirm the active userspace renderer and Vulkan ICD with glxinfo -B and vulkaninfo --summary in the target desktop session.
 - Network adapters detected: Intel I219-V Ethernet (e1000e) and Qualcomm Atheros QCA6174 Wi-Fi (ath10k_pci). Addresses are omitted.
 
+### Live follow-up (2026-11-18 06:35 EST)
+
+- CPU package temperature was 35 C and core temperatures were 31–35 C. CPU frequency policy remains `powersave`, 800 MHz minimum, 3.0 GHz maximum; current frequency was about 800 MHz. CPU0 thermal-throttle counters were 44,529 core and 110,408 package events, unchanged from the preceding 04:57 EST snapshot. These readings show no active thermal problem during this observation; they do not explain earlier intermittent excursions to 100 C. No stress load was applied.
+- GDS still reports `Vulnerable: No microcode`; loaded CPU microcode remains `0xf0`. The kernel command line has no `gather_data_sampling` override. No firmware or boot setting was changed.
+- GPU PCI ID `1002:7590` is bound to `amdgpu`. Current GPU telemetry is cool (edge 30 C, junction 32 C, memory 27 C; 13 W). Kernel journal contains repeated pairs of `MODE1 reset`/GPU mode1 reset entries at 08:24, 12:52, 16:13, and 19:29 on Nov 17. At 19:29, `printk: Suspending console(s)` immediately precedes the reset and the driver logs successful SMU resume/reinitialization; this is consistent with the system suspend/resume path, not evidence by itself of a defective card. The kernel boot log still includes the startup RA24 unsupported-format errors and CRTC `REG_WAIT` events. No GPU stress test was run.
+- `glxinfo -B` could not connect to display `:0` from this shell. `vulkaninfo --summary` likewise could not create an X surface and then exited with SIGSEGV (systemd-coredump logged the crash at 06:36). These out-of-session diagnostics do not establish which renderer the desktop uses. Verify from the graphical desktop session before drawing conclusions about llvmpipe or Vulkan ICD selection.
+- Package versions remain Linux Zen 7.3.4.zen2-2, Mesa 26.2.7-1, libdrm 2.4.134-1, and KWin 6.8.3-1. `pacman -Qu` reported no pending package upgrades. No driver or firmware changes have been made.
+- Next diagnostic steps: inspect GPU resume/reset journal context and desktop-session renderer from within the active graphical session; for CPU, capture temperatures, clock, and throttle counter deltas during normal workload if the high-temperature symptom recurs. Do not infer cooler failure or hardware defect from the current cool snapshot. Preserve the current CPU cap until thermal behavior is understood.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
