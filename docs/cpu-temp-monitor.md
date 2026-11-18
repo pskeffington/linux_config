@@ -1,9 +1,9 @@
 # CPU temperature monitor
 
 The user service samples CPU package/core temperatures, current and maximum CPU
-frequency, CPU0 core/package thermal-throttle event counts, maximum episode
-duration and cumulative throttle duration, aggregate CPU busy percentage, and
-1-minute load every 10 seconds. It writes CSV to
+frequency, each physical core's thermal-throttle event count, maximum episode
+duration and cumulative throttle duration, package throttle counters, aggregate
+CPU busy percentage, and 1-minute load every 10 seconds. It writes CSV to
 `${XDG_STATE_HOME:-~/.local/state}/cpu-temp-monitor/` and rotates the active file
 at 5 MiB, retaining four previous files. When the CSV schema changes, the
 previous file is preserved as the first rotated archive and a fresh header is
@@ -30,6 +30,8 @@ The service is read-only with respect to CPU controls. The first `cpu_busy_pct`
 row after startup or log rotation is blank because it needs two `/proc/stat`
 samples; later values are the aggregate busy percentage over the preceding
 interval. Empty temperature fields mean the corresponding `coretemp` sysfs
-sensor was not exposed. Event counts and cumulative durations are since boot;
-compare the cumulative duration between rows to see whether thermal throttling
-continued. The maximum duration is the longest single episode since boot.
+sensor was not exposed. Core-specific columns use CPU IDs 0–3, the four unique
+cores on this system (SMT siblings are omitted). Event counts and cumulative
+durations are since boot; compare cumulative durations between rows to see
+whether throttling continued. Maximum durations are the longest single episode
+since boot.
