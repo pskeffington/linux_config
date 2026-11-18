@@ -20,6 +20,6 @@ Do not assume authorization for one harmless `pkexec /usr/bin/true` check author
 
 ## Verified example (2026-11-18)
 
-`pkexec /usr/bin/true` completed with exit status `0`. Using the same Polkit path, the previously requested runtime CPU policy restoration completed: `/sys/devices/system/cpu/intel_pstate/no_turbo` became `0`, and `/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq` became `4200000` kHz. `max_perf_pct` remained `100`. The CPU package was 53 C at verification. These policy changes are runtime-only and revert on reboot or later policy changes.
+`pkexec /usr/bin/true` completed with exit status `0`. Using the same Polkit path, the requested Turbo enable changed `/sys/devices/system/cpu/intel_pstate/no_turbo` to `0` and `/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq` to `4200000` kHz; the monitor recorded 3.90 GHz. Later natural SDR workload caused CPU package temperatures to reach 100 C with increasing thermal-throttle duration, so the same Polkit method restored the previous protective policy (`no_turbo=1`, all policy maxima `3000000` kHz). The package fell to 50 C shortly after the rollback and thermal-duration counters stopped increasing in the subsequent observed samples. No synthetic load was applied. CPU policy writes are runtime-only and revert on reboot or later policy changes.
 
 The system recon report tracks the current GDS, CPU, and GPU findings: [`SYSTEM_RECON.md`](../SYSTEM_RECON.md).
