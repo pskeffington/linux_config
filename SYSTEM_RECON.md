@@ -221,6 +221,15 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 The prioritized repair sequence, acceptance checks, and required approval gates are documented in [`docs/hardware-repair-roadmap.md`](docs/hardware-repair-roadmap.md).
 
+
+### User-reported reboot instability (2026-11-18 22:34 EST)
+
+- User reports the host is stable while running, but reboot often fails and requires a full power-off/power-on cycle. No reboot was initiated for this investigation.
+- The retained `wtmp` history shows one successful reboot across a kernel update on Nov 17: Linux Zen 6.19.6 shut down at 03:54 EST, then 7.3.4 booted at 03:55 EST and remains the current boot. This one successful transition does not disprove an intermittent failure.
+- `journalctl --list-boots` exposes only the current boot; no prior-boot journal or pstore crash file is available. The current boot has no reboot, kernel panic, watchdog, or lockup records. Existing PCIe bridge, NVMe namespace, and AMDGPU reset messages occur during hibernation/resume or startup and cannot be assigned as the cause of the reported reboot failures.
+- For the next naturally occurring event, record the board Q-Code/debug LED, fan and GPU initialization, display state, and timestamp if safe. After recovery, inspect prior-boot journal and pstore before log rotation. Reproduction is deferred while reboot approval and CPU-cap persistence remain unresolved.
+- See the [hardware repair roadmap](docs/hardware-repair-roadmap.md) for the reboot evidence checklist and other gated actions.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
