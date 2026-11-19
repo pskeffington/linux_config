@@ -54,6 +54,17 @@ The current compositor started before the hook existed, so current-session resul
 
 The exact RA24 message is explained by AMD DC advertising DRM RGBA8888 while rejecting the matching surface format. Linux mainline still lacks `SURFACE_PIXEL_FORMAT_GRPH_RGBA8888`; AMD's support/crossbar patches are posted for review. Continue using released kernel updates and recheck this upstream source/patch status before considering a custom kernel. Do not build or install an unreviewed multi-patch kernel stack just to test the format fix.
 
+
+## User-reported reboot instability
+
+**Status: intermittent warm-reboot failure reported; cause not captured. System is stable while running.**
+
+- User reports that reboot often fails and recovery requires a complete power-off/power-on cycle. No reboot was initiated during this investigation.
+- The retained `wtmp` history shows one successful transition on Nov 17: kernel 6.19.6 shut down at 03:54, then kernel 7.3.4 booted at 03:55 and remains the current boot. This single successful reboot does not contradict an intermittent issue.
+- The available journal contains only the current boot; no previous-boot journal or pstore crash dump is available. The current boot has no reboot, panic, watchdog, or lockup records. Existing PCIe/NVMe/GPU messages are from hibernation/resume and startup; they cannot be attributed to a failed reboot from this evidence.
+- For the next naturally occurring failure, if it is safe and practical, record the motherboard Q-Code/debug LED, whether fans and GPU initialize, monitor/video state, and the time. After recovery, collect the prior boot journal and pstore contents before rotating logs. Do not reproduce the failure solely for diagnosis while the CPU cap/reboot plan is unresolved.
+
+
 ## Hardware-fault assessment
 
 - CPU cooling/control: thermal-limit events are confirmed under Turbo and heavy SDR work. The 3 GHz cap is stable under the observed natural-use interval. Cooler, mounting, fan/VRM behavior, and platform limit signals remain unisolated; no specific hardware part is condemned.
