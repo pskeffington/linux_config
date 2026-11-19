@@ -12,6 +12,11 @@ This roadmap tracks the hardware and driver issues investigated on this host. It
 - NVMe: Intel SSD 750 AIC reports SMART overall-health PASS, 0 critical warnings, 0 media/integrity errors, 0 error-log entries, and 1% used. Endpoint `0d:00.0` supports x4 but is linked at 8 GT/s x1; upstream root port `00:1c.7` itself reports maximum width x1. The motherboard path is therefore currently x1; physical slot mapping is unavailable, so verify the card is in ASUS slot 6 (`PCIEX4_3`) with UEFI `PCIe Mode` before considering a physical change. The drive logged one namespace-identify failure during hibernation resume, then restored its queues. Link width and SMART health do not establish a device defect.
 - Board telemetry: NCT6793D is detected, but `nct6775` is blocked by an ACPI SystemIO conflict with `\\_GPE.HWM`; no CPU fan RPM or board temperature is exposed. Do not force access to the ACPI-reserved region without a reviewed test and recovery plan.
 
+### Extended capped-operation monitor update (2026-11-18 22:39 EST)
+
+- Read-only analysis of 4,012 monitor samples from 11:19:02 to 22:39:34 EST found package temperatures of 31–71 C, peak aggregate CPU busy 68.7%, and peak 1-minute load 5.49 during ordinary operation.
+- Package cumulative thermal-throttle duration stayed at 520,493 ms across this interval. No synthetic load was applied. This extends evidence that the active Turbo-off/3.0 GHz runtime policy remains thermally stable in observed use; it does not establish Turbo-on cooling performance or explain the reported warm-reboot failures.
+
 ## Priority 1: Keep the CPU inside known limits
 
 **Status: runtime cap holding; Turbo-on thermal behavior requires physical/telemetry follow-up.**
