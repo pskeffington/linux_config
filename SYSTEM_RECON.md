@@ -186,6 +186,12 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Read-only analysis of 3,052 monitor samples from 11:18:52 to 19:56:42 EST (about 8.5 hours after restoring the prior Turbo-off, 3.0 GHz runtime cap) found package temperature 32–55 C and zero samples at or above the 80 C high threshold. Peak aggregate CPU busy was 50.3% and peak 1-minute load was 4.40 during ordinary system activity; no synthetic load was applied.
 - Per-core and package cumulative thermal-throttle duration counters remained unchanged throughout the sampled interval (package 520,493 ms; core totals 169,808 / 321,510 / 41,333 / 40,504 ms). This is sustained observed-use evidence that the current capped configuration is thermally stable over this interval; it does not diagnose the cooler or rule out thermal issues at higher sustained workloads with Turbo enabled.
 
+
+### Live GPU session and recent-log check (2026-11-18 20:06 EST)
+
+- Read-only host-session check again confirmed OpenGL direct rendering on AMD Radeon RX 9060 XT (`radeonsi`, gfx1200, Mesa 26.2.7) with acceleration enabled. Vulkan lists AMD RADV for the RX 9060 XT as GPU0; llvmpipe appears only as the CPU GPU1.
+- Kernel journal search found no new `Unsupported screen format RA24`, CRTC `REG_WAIT` timeout, GPU reset, or ring-timeout entries since 18:00 EST. The earlier startup RA24 messages remain in the current boot log; this does not prove the compositor workaround is active or that a new Plasma session has tested it.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
