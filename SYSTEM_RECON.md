@@ -156,6 +156,14 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - The KWin software-cursor startup hook still points to the repository script, but the live KWin process environment could not be read (`/proc/<pid>/environ` returned permission denied); the user systemd environment also had no `KWIN_FORCE_SW_CURSOR` value. Therefore, activation of the workaround is unverified, and its effect on RA24 errors has not been tested in a fresh Plasma session.
 - The current kernel continues to report `Vulnerable: No microcode`; no GDS option is present in `/proc/cmdline`. The opt-in GRUB generator and original-config backup exist, but this shell cannot read the mode-0600 active GRUB file, so its current menu contents/default were not revalidated in this check. No reboot or boot configuration change occurred.
 
+
+### Live CPU and GRUB verification (2026-11-18 19:43 EST)
+
+- Read-only checks confirm the persistent monitor is still appending. Direct sensors at 19:43:15 showed package 34 C and cores 28–34 C. The 19:42:58 and 19:43:08 rows show package 33–34 C, aggregate CPU busy 26.3–27.9%, and a 3,000,000 kHz frequency maximum. Turbo remains disabled (`no_turbo=1`). Package cumulative thermal-throttle duration remains 520,493 ms, unchanged from the previous observation.
+- Using the verified Polkit path for read-only access, `grub-script-check /boot/grub/grub.cfg` exited 0. The active config retains default entry `0` and contains the separate `Garuda Linux Zen — GDS fallback (AVX disabled)` menu entry. The generator and pre-change backup are present. A byte comparison against the backup differs as expected because the active config includes the added menu entry.
+- The system has not rebooted into the fallback: the running kernel still reports `Vulnerable: No microcode` and the command line has no GDS override. No boot selection or configuration change occurred during this check.
+- Current-boot kernel journal count remains 452 `Unsupported screen format RA24` messages. The active desktop renderer is confirmed as accelerated RX 9060 XT/RADV by the 11:45 check above; activation and effect of the KWin software-cursor workaround remain unverified.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
