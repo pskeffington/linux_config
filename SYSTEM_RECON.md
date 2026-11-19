@@ -61,7 +61,7 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Objective: diagnose and remediate the CPU/GPU issues observed on this system; preserve evidence in this repository.
 - Scope: read-only system diagnostics and this report. Any boot-configuration, firmware, privileged runtime, or physical hardware changes require the relevant user choice/approval and safe access.
 - Acceptance: CPU remains below the 80 C high threshold at idle with no increasing thermal-throttle time; GDS is either verified mitigated or the selected fallback is configured and verified with its AVX impact understood; GPU errors are traced to a supported driver path or reproducibly resolved; updated evidence is committed and pushed.
-- Dependencies/blockers: CPU cooler has been replaced per user; safe idle snapshot improved, but sustained-load behavior is unverified; privileged frequency cap requires an interactive password and was not applied; user selection for GDS fallback remains pending; display runtime verification is limited by this diagnostic shell not having an accessible desktop session.
+- Initial dependencies/blockers recorded at task intake (2026-11-17): CPU cooler had been replaced, sustained-load behavior was unverified, privileged frequency cap had not yet been applied, GDS fallback selection was pending, and the desktop renderer was not accessible from the initial diagnostic shell. Subsequent timestamped follow-ups below supersede these initial observations.
 - Rollback: no system configuration changes have been made. Any future GRUB or CPU frequency change must retain a normal boot/recovery path and be reversible.
 
 ### GDS follow-up (2026-11-17)
@@ -191,6 +191,13 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Read-only host-session check again confirmed OpenGL direct rendering on AMD Radeon RX 9060 XT (`radeonsi`, gfx1200, Mesa 26.2.7) with acceleration enabled. Vulkan lists AMD RADV for the RX 9060 XT as GPU0; llvmpipe appears only as the CPU GPU1.
 - Kernel journal search found no new `Unsupported screen format RA24`, CRTC `REG_WAIT` timeout, GPU reset, or ring-timeout entries since 18:00 EST. The earlier startup RA24 messages remain in the current boot log; this does not prove the compositor workaround is active or that a new Plasma session has tested it.
+
+
+### Current state and reboot safety (2026-11-18 20:07 EST)
+
+- The active CPU policy is runtime-only: `no_turbo=1` and CPU frequency policy maximum 3,000,000 kHz. A targeted search of `/etc/systemd`, `/etc/udev`, `/etc/default`, `~/.config/systemd`, `~/.config/autostart`, and this repository found no boot-time rule that reapplies the cap. Therefore, assume the protective cap will not survive reboot unless a persistent policy is explicitly installed. Turbo-enabled SDR workload previously produced 99–100 C package readings and increased thermal-throttle duration; the cap-controlled 8.5-hour natural-use interval stayed 32–55 C with no added throttle time.
+- This changes the conditions for any GDS reboot test: the earlier reboot authorization request did not mention that the CPU cap is runtime-only and is superseded. Do not reboot into the GDS entry until a safe post-boot CPU cap plan is explicitly chosen. A persistent cap would reduce peak CPU performance on every boot until removed; leaving the cap runtime-only means the reboot test should remain deferred until the user can ensure the cap is restored before the high-load SDR services run.
+- Other current findings: GDS fallback menu entry is installed and validated but not boot-tested; kernel still reports `Vulnerable: No microcode`. RX 9060 XT acceleration is confirmed, while startup RA24 messages remain and the KWin workaround needs a fresh Plasma session. Intel SSD 750 SMART passes with zero media/error-log entries, but its link remains x1 versus x4 capability; physical slot and UEFI routing are not visible to this session.
 
 ## Development environment
 
