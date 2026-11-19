@@ -267,3 +267,10 @@ Collected from read-only system interfaces and installed tool output, including 
 - Read-only analysis of 4,012 monitor rows from 11:19:02 to 22:39:34 EST found package temperature 31–71 C, peak aggregate CPU busy 68.7%, and peak 1-minute load 5.49 during ordinary use.
 - Package cumulative thermal-throttle duration stayed at 520,493 ms from the first sample through the last. No synthetic load was applied. This extends the observed stable interval under the runtime Turbo-off/3.0 GHz policy; it does not test Turbo-on cooling or diagnose the warm-reboot failure.
 - The monitor CSV is actively appending, but systemctl --user status was unavailable from this diagnostic context because access to the user-scope bus was denied. No conclusion about service-manager state is drawn from that command.
+
+
+### Live GPU health spot check (2026-11-18 22:40 EST)
+
+- RX 9060 XT PCIe link remains 32.0 GT/s x16. Endpoint AER totals are zero for correctable, nonfatal, and fatal errors.
+- GPU edge/junction/memory temperatures were 31/34/30 C. Fan telemetry read 0 RPM at this low-power state; the reading alone does not indicate fan failure.
+- No RA24, REG_WAIT, ring-timeout, or GPU-reset messages were found since 20:00 EST. The earlier startup display-format failures remain unresolved; this spot check does not test a fresh Plasma session or validate the cursor workaround.
