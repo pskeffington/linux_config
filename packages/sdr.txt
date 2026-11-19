@@ -1,0 +1,8 @@
+# SDR / DSP candidates; distro-specific availability must be checked
+rtl-sdr
+soapysdr
+soapyrtlsdr
+gnuradio
+gqrx
+hackrf
+rtl_433

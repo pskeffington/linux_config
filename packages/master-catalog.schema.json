@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Field RF master package catalog",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "deployment_contract",
+    "profiles",
+    "packages"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "repository": {
+      "type": "string"
+    },
+    "deployment_contract": {
+      "type": "object"
+    },
+    "profiles": {
+      "type": "object"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "profile",
+          "package_name",
+          "source",
+          "source_url",
+          "owner",
+          "hardware_adapters",
+          "status",
+          "install_default",
+          "review_required"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._+\\-]*$"
+          },
+          "kind": {
+            "enum": [
+              "native",
+              "manual-review"
+            ]
+          },
+          "profile": {
+            "type": "string"
+          },
+          "package_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "source_url": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "component_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hardware_adapters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "enum": [
+              "CANDIDATE_UNVERIFIED",
+              "MANUAL_REVIEW_REQUIRED",
+              "PACKAGE_RESOLVED",
+              "HOST_PASS",
+              "BLOCKED"
+            ]
+          },
+          "install_default": {
+            "type": "boolean"
+          },
+          "review_required": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

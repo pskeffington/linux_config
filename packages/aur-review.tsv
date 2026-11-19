@@ -1,0 +1,7 @@
+name	sector	validation	policy
+wsjtx	weak-signal	Check ArchWiki and AUR maintainer, source and PKGBUILD	Manual approval only
+js8call	field-digital	Check upstream project, AUR source and PKGBUILD	Manual approval only
+flrig	rig-control	Check ArchWiki and AUR maintainer	Manual approval only
+freedv	digital-voice	Check official build instructions and dependencies	Manual approval only
+meshtastic-cli	mesh	Check upstream CLI packaging and device support	Manual approval only
+sdrpp	waterfall	Check upstream release, AUR source and GPU requirements	Manual approval only

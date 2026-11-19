@@ -1,0 +1,6 @@
+# Opt-in KDE Plasma utilities, package names validated against workstation databases
+plasma-desktop
+breeze
+konsole
+dolphin
+kate
