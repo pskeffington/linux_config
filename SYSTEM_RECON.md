@@ -210,6 +210,12 @@ This file records a sanitized hardware and software baseline for the worker. Val
 
 - Rechecked current Linux mainline `drivers/gpu/drm/amd/display/dc/dc_hw_types.h`: the graphics surface enum still has no `SURFACE_PIXEL_FORMAT_GRPH_RGBA8888` entry. The AMD DC November 23 patch series posted Nov 16 includes patch 30 to add RGBA8888 surface support and patch 31 to correct DCE crossbar handling. Its cover letter states that `amdgpu_dm` advertises `DRM_FORMAT_RGBA8888` while DC rejects it, yielding the exact KWin `Unsupported screen format RA24 little-endian` error seen here. As of this check, that fix is posted for review and is not in current Linux mainline; no released fix is identified for the installed kernel. Sources: [current Linux mainline source](https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/amd/display/dc/dc_hw_types.h), [AMD Nov 23 DC patch series](https://lore-kernel.gnuweeb.org/amd-gfx/20261116215641.2800595-23-PingLei.Lin%40amd.com/T/), [reported AMD bug/work item 5339](https://gitlab.freedesktop.org/drm/amd/-/issues/5339).
 
+
+### NCT6793D / ACPI sensor access conflict (2026-11-18 20:29 EST)
+
+- Kernel log records `nct6775: Found NCT6793D or compatible chip at 0x2e:0x290`, followed by an ACPI SystemIO conflict: `0x295–0x296` overlaps ACPI OpRegion `0x290–0x299` (`\\_GPE.HWM`). The driver therefore does not register an NCT6775 hwmon device; this explains the missing board temperature and fan-RPM readings and is not evidence of a failed sensor.
+- Linux documents `acpi_enforce_resources=strict` as the default, which denies legacy drivers access to ACPI-claimed resources; `lax` would permit access while logging a warning. This parameter was not enabled: it would allow the driver to access the same I/O region used by firmware AML, so firmware/driver interaction needs review before considering a test. No kernel parameter or driver setting was changed. Source: [Linux kernel parameter documentation](https://docs.kernel.org/next/admin-guide/kernel-parameters.html#acpi-enforce-resources).
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
