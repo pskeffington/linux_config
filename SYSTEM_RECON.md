@@ -244,3 +244,11 @@ The prioritized repair sequence, acceptance checks, and required approval gates 
 ## Collection notes
 
 Collected from read-only system interfaces and installed tool output, including uname, os-release, lscpu, free, lsblk, df, lspci, inxi, pacman, sensors, sysfs CPU frequency policy, and /proc/loadavg. Re-run these checks after hardware, firmware, kernel, or driver changes.
+
+
+### Live GDS and thermal-policy check (2026-11-18 22:37 EST)
+
+- The running kernel still reports `Vulnerable: No microcode`; loaded microcode is `0xf0`, and `/proc/cmdline` contains no `gather_data_sampling` parameter. The fallback has not been boot-tested.
+- The runtime CPU protection remains active: `intel_pstate/no_turbo=1` and policy maximum `3,000,000 kHz`. Direct sensors read package 49 C and cores 40–49 C. No synthetic load or boot transition was performed.
+- A read-only kernel-journal search over the preceding 30 minutes found no matching panic, watchdog, lockup, AER, NVMe error, GPU reset/timeout, or thermal messages (search exit 1: no matches).
+- This is evidence of the current powered-on state only; it does not diagnose or resolve the user-reported intermittent warm-reboot failure. The persistent cap decision and safe GDS test remain pending.
