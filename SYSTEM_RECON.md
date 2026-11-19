@@ -260,3 +260,10 @@ Collected from read-only system interfaces and installed tool output, including 
 - CPU policy remains Turbo-off (`no_turbo=1`) with a 3,000,000 kHz maximum. CPU package was 45 C and cores 38–45 C.
 - GPU telemetry: edge 31 C, junction 34 C, memory 30 C; NVMe composite 30.9 C. GPU fan reports 0 RPM at this low-power snapshot, consistent with possible fan-stop behavior and not diagnostic of failure.
 - GDS remains `Vulnerable: No microcode`. No reboot, synthetic load, or hardware change was performed.
+
+
+### Extended capped CPU monitor review (2026-11-18 22:39 EST)
+
+- Read-only analysis of 4,012 monitor rows from 11:19:02 to 22:39:34 EST found package temperature 31–71 C, peak aggregate CPU busy 68.7%, and peak 1-minute load 5.49 during ordinary use.
+- Package cumulative thermal-throttle duration stayed at 520,493 ms from the first sample through the last. No synthetic load was applied. This extends the observed stable interval under the runtime Turbo-off/3.0 GHz policy; it does not test Turbo-on cooling or diagnose the warm-reboot failure.
+- The monitor CSV is actively appending, but systemctl --user status was unavailable from this diagnostic context because access to the user-scope bus was denied. No conclusion about service-manager state is drawn from that command.
