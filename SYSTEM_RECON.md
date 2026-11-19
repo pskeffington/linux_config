@@ -171,6 +171,13 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - The discrete GPU's hwmon reports edge 31 C, junction 34 C, memory 30 C, and fan input 0 RPM at this low-load snapshot. The zero fan reading may reflect the card's idle fan-stop behavior and does not indicate a GPU fault by itself.
 - CPU package/core hwmon readings during this inspection were 38 C and 34–38 C. No hardware control was changed.
 
+
+### PCIe and NVMe resume-path review (2026-11-18)
+
+- Current-boot kernel journal review found repeated PCIe bridge memory-window allocation failures (2 MiB non-prefetchable windows on bridges `06:01.0` and `06:04.0`) during boot and repeated hibernation/resume transitions. At the latest observed hibernation exit (Nov 17 19:29:46), NVMe logged one `Identify namespace failed (-5)` immediately before restoring its I/O queues on the next log entry. This is a resume/enumeration anomaly to track; the log alone does not establish a defective NVMe device, GPU, motherboard, or PCIe slot.
+- The same resume sequences show AMDGPU MODE1 resets during console suspend, followed by PSP/SMU resume and successful GPU reinitialization. The reviewed current-boot journal contains no PCIe AER reports, AMDGPU ring timeouts, or spontaneous GPU reset outside those suspend/resume sequences. The two CRTC `REG_WAIT` timeouts remain associated with startup display setup.
+- Current desktop rendering remains accelerated on RX 9060 XT and Vulkan RADV (verified at 11:45). PCI configuration capability reads were denied to the unprivileged `lspci` process; NVMe SMART data could not be read from this sandbox device namespace. Follow-up should inspect NVMe health and PCIe resource/topology data from an authorized host diagnostic context, especially if storage I/O errors recur outside resume.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
