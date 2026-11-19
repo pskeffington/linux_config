@@ -199,6 +199,12 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - This changes the conditions for any GDS reboot test: the earlier reboot authorization request did not mention that the CPU cap is runtime-only and is superseded. Do not reboot into the GDS entry until a safe post-boot CPU cap plan is explicitly chosen. A persistent cap would reduce peak CPU performance on every boot until removed; leaving the cap runtime-only means the reboot test should remain deferred until the user can ensure the cap is restored before the high-load SDR services run.
 - Other current findings: GDS fallback menu entry is installed and validated but not boot-tested; kernel still reports `Vulnerable: No microcode`. RX 9060 XT acceleration is confirmed, while startup RA24 messages remain and the KWin workaround needs a fresh Plasma session. Intel SSD 750 SMART passes with zero media/error-log entries, but its link remains x1 versus x4 capability; physical slot and UEFI routing are not visible to this session.
 
+
+### KWin workaround session-age verification (2026-11-18 20:12 EST)
+
+- Host process metadata shows the current `kwin_wayland` started Nov 17 at 03:58:36 EST and `plasmashell` at 03:58:37 EST. The KWin software-cursor environment hook symlink was installed Nov 18 at 09:30 EST. The running compositor therefore predates the hook and cannot have received its exported variable; this session has not tested the workaround. The host user systemd manager also has no `KWIN_FORCE_SW_CURSOR` environment value. Verify after a future Plasma login; no logout or compositor restart was performed.
+- The CPU temperature monitor user service is active, and its latest row at 20:11:38 shows package 34 C with the 3,000,000 kHz maximum and unchanged cumulative throttle counters. No matching GPU startup-format, CRTC timeout, GPU reset, or ring-timeout kernel messages appeared since 20:00 EST.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
