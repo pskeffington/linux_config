@@ -164,6 +164,13 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - The system has not rebooted into the fallback: the running kernel still reports `Vulnerable: No microcode` and the command line has no GDS override. No boot selection or configuration change occurred during this check.
 - Current-boot kernel journal count remains 452 `Unsupported screen format RA24` messages. The active desktop renderer is confirmed as accelerated RX 9060 XT/RADV by the 11:45 check above; activation and effect of the KWin software-cursor workaround remain unverified.
 
+
+### Platform sensor availability check (2026-11-18 19:46 EST)
+
+- Read-only sysfs/sensors inspection confirms the `nct6775` and `nct6775_core` kernel modules are loaded, but no NCT6775 hwmon device was registered. The visible ASUS hwmon device exposes no `fan*_input` or `temp*_input` readings. Therefore CPU-fan RPM, motherboard/VRM temperature, and board fan telemetry remain unavailable from Linux on this configuration; this is a sensor-visibility limitation, not evidence of a failed fan.
+- The discrete GPU's hwmon reports edge 31 C, junction 34 C, memory 30 C, and fan input 0 RPM at this low-load snapshot. The zero fan reading may reflect the card's idle fan-stop behavior and does not indicate a GPU fault by itself.
+- CPU package/core hwmon readings during this inspection were 38 C and 34–38 C. No hardware control was changed.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
