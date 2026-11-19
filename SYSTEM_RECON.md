@@ -180,6 +180,12 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Authorized read-only `pkexec smartctl -a -d nvme /dev/nvme0` completed with exit status 0 on 2026-11-18 19:54 EST. The Intel SSD 750 SMART overall-health result is `PASSED`; critical warning 0, available spare 99% (threshold 10%), percentage used 1%, media/data-integrity errors 0, and NVMe error-log entries 0. Temperature was 31 C. The lifetime unsafe-shutdown counter is 253; this is a historical counter and does not identify its cause. No SMART self-test was started (the drive reports self-tests unsupported), and no data was written.
 - Current desktop rendering remains accelerated on RX 9060 XT and Vulkan RADV (verified at 11:45). PCI configuration capability reads were denied to the unprivileged `lspci` process; NVMe SMART data could not be read from this sandbox device namespace. Follow-up should inspect NVMe health and PCIe resource/topology data from an authorized host diagnostic context, especially if storage I/O errors recur outside resume.
 
+
+### Extended capped-operation monitor review (2026-11-18 19:56 EST)
+
+- Read-only analysis of 3,052 monitor samples from 11:18:52 to 19:56:42 EST (about 8.5 hours after restoring the prior Turbo-off, 3.0 GHz runtime cap) found package temperature 32–55 C and zero samples at or above the 80 C high threshold. Peak aggregate CPU busy was 50.3% and peak 1-minute load was 4.40 during ordinary system activity; no synthetic load was applied.
+- Per-core and package cumulative thermal-throttle duration counters remained unchanged throughout the sampled interval (package 520,493 ms; core totals 169,808 / 321,510 / 41,333 / 40,504 ms). This is sustained observed-use evidence that the current capped configuration is thermally stable over this interval; it does not diagnose the cooler or rule out thermal issues at higher sustained workloads with Turbo enabled.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
