@@ -148,6 +148,14 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - The current kernel still reports `Vulnerable: No microcode`; `/proc/cmdline` contains no GDS fallback parameter. No reboot or fallback selection occurred. The installed GDS entry remains unverified at runtime.
 - This check was read-only; no CPU, boot, firmware, or desktop-session settings were changed.
 
+
+### Live GPU and boot-status follow-up (2026-11-18 11:45 EST)
+
+- Rechecked from the host desktop session: `glxinfo -B` reports AMD Radeon RX 9060 XT (`radeonsi`, gfx1200) with direct rendering and acceleration enabled. `vulkaninfo --summary` reports AMD RADV for PCI device `1002:7590` as GPU0 (discrete); llvmpipe is listed only as GPU1 (CPU).
+- The current boot kernel journal contains 452 `Unsupported screen format RA24` messages. No driver change was made. This confirms hardware rendering is active but does not resolve the startup display-format errors.
+- The KWin software-cursor startup hook still points to the repository script, but the live KWin process environment could not be read (`/proc/<pid>/environ` returned permission denied); the user systemd environment also had no `KWIN_FORCE_SW_CURSOR` value. Therefore, activation of the workaround is unverified, and its effect on RA24 errors has not been tested in a fresh Plasma session.
+- The current kernel continues to report `Vulnerable: No microcode`; no GDS option is present in `/proc/cmdline`. The opt-in GRUB generator and original-config backup exist, but this shell cannot read the mode-0600 active GRUB file, so its current menu contents/default were not revalidated in this check. No reboot or boot configuration change occurred.
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
