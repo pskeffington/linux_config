@@ -205,6 +205,11 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Host process metadata shows the current `kwin_wayland` started Nov 17 at 03:58:36 EST and `plasmashell` at 03:58:37 EST. The KWin software-cursor environment hook symlink was installed Nov 18 at 09:30 EST. The running compositor therefore predates the hook and cannot have received its exported variable; this session has not tested the workaround. The host user systemd manager also has no `KWIN_FORCE_SW_CURSOR` environment value. Verify after a future Plasma login; no logout or compositor restart was performed.
 - The CPU temperature monitor user service is active, and its latest row at 20:11:38 shows package 34 C with the 3,000,000 kHz maximum and unchanged cumulative throttle counters. No matching GPU startup-format, CRTC timeout, GPU reset, or ring-timeout kernel messages appeared since 20:00 EST.
 
+
+### RA24 upstream fix status (2026-11-18)
+
+- Rechecked current Linux mainline `drivers/gpu/drm/amd/display/dc/dc_hw_types.h`: the graphics surface enum still has no `SURFACE_PIXEL_FORMAT_GRPH_RGBA8888` entry. The AMD DC November 23 patch series posted Nov 16 includes patch 30 to add RGBA8888 surface support and patch 31 to correct DCE crossbar handling. Its cover letter states that `amdgpu_dm` advertises `DRM_FORMAT_RGBA8888` while DC rejects it, yielding the exact KWin `Unsupported screen format RA24 little-endian` error seen here. As of this check, that fix is posted for review and is not in current Linux mainline; no released fix is identified for the installed kernel. Sources: [current Linux mainline source](https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/amd/display/dc/dc_hw_types.h), [AMD Nov 23 DC patch series](https://lore-kernel.gnuweeb.org/amd-gfx/20261116215641.2800595-23-PingLei.Lin%40amd.com/T/), [reported AMD bug/work item 5339](https://gitlab.freedesktop.org/drm/amd/-/issues/5339).
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
