@@ -216,6 +216,11 @@ This file records a sanitized hardware and software baseline for the worker. Val
 - Kernel log records `nct6775: Found NCT6793D or compatible chip at 0x2e:0x290`, followed by an ACPI SystemIO conflict: `0x295–0x296` overlaps ACPI OpRegion `0x290–0x299` (`\\_GPE.HWM`). The driver therefore does not register an NCT6775 hwmon device; this explains the missing board temperature and fan-RPM readings and is not evidence of a failed sensor.
 - Linux documents `acpi_enforce_resources=strict` as the default, which denies legacy drivers access to ACPI-claimed resources; `lax` would permit access while logging a warning. This parameter was not enabled: it would allow the driver to access the same I/O region used by firmware AML, so firmware/driver interaction needs review before considering a test. No kernel parameter or driver setting was changed. Source: [Linux kernel parameter documentation](https://docs.kernel.org/next/admin-guide/kernel-parameters.html#acpi-enforce-resources).
 
+
+### Action roadmap
+
+The prioritized repair sequence, acceptance checks, and required approval gates are documented in [`docs/hardware-repair-roadmap.md`](docs/hardware-repair-roadmap.md).
+
 ## Development environment
 
 - GCC 16.2.1, Python 3.14.10, Node.js 26.13.1, npm 12.2.2, Git 2.56.1
