@@ -252,3 +252,11 @@ Collected from read-only system interfaces and installed tool output, including 
 - The runtime CPU protection remains active: `intel_pstate/no_turbo=1` and policy maximum `3,000,000 kHz`. Direct sensors read package 49 C and cores 40–49 C. No synthetic load or boot transition was performed.
 - A read-only kernel-journal search over the preceding 30 minutes found no matching panic, watchdog, lockup, AER, NVMe error, GPU reset/timeout, or thermal messages (search exit 1: no matches).
 - This is evidence of the current powered-on state only; it does not diagnose or resolve the user-reported intermittent warm-reboot failure. The persistent cap decision and safe GDS test remain pending.
+
+
+### Live CPU/GPU/NVMe spot check (2026-11-18 22:38 EST)
+
+- Current boot remains the sole entry in `journalctl --list-boots` (boot ID `b060c1d559b94e94b3e8aee819c7b17b`, started Nov 17 03:55 EST). This provides no failed-reboot trace.
+- CPU policy remains Turbo-off (`no_turbo=1`) with a 3,000,000 kHz maximum. CPU package was 45 C and cores 38–45 C.
+- GPU telemetry: edge 31 C, junction 34 C, memory 30 C; NVMe composite 30.9 C. GPU fan reports 0 RPM at this low-power snapshot, consistent with possible fan-stop behavior and not diagnostic of failure.
+- GDS remains `Vulnerable: No microcode`. No reboot, synthetic load, or hardware change was performed.
